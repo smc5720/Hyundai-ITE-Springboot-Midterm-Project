@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common/layout::setContent(~{this::#content})}">
+
+	<div id="content" class="card m-2">
+		<div class="card-header">Text 삽입</div>
+		<div class="card-body">
+			<div>
+				<h6 class="text-info">속성 삽입: th:text, th:utext</h6>
+				<hr>
+				<div>bno: <span th:text="${board.bno}"></span></div>
+				<div>btitle: <span th:text="${board.btitle}"></span></div>
+				<div>bcontent: <span th:text="${board.bcontent}"></span></div>
+				<div>bcontent(unescaped): <span th:utext="${board.bcontent}"></span></div>
+				<div>mid: <span th:text="${board.mid}"></span></div>
+				<div>bdate: <span th:text="${#dates.format(board.bdate, 'yyyy.MM.dd')}"></span></div>
+			</div>
+			<hr>
+			<div>
+				<h6 class="text-info">인라인 삽입: [[...]], [(...)]</h6>
+				<hr>
+				<div>bno: [[${board.bno}]]</div>
+				<div>btitle: [[${board.btitle}]]</div>
+				<div>bcontent: [[${board.bcontent}]]</div>
+				<div>bcontent(unescaped): [(${board.bcontent})]</div>
+				<div>mid: [[${board.mid}]]</div>
+				<div>bdate: [[${#dates.format(board.bdate, 'yyyy.MM.dd')}]]</div>
+			</div>
+		</div>
+	</div>
+
+</th:block>
+
+</html>

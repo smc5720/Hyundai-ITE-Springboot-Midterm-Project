@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="setContent(content)">
+
+	<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spring Boot</title>
+<link rel="stylesheet"
+	th:href="@{/bootstrap-4.6.0-dist/css/bootstrap.min.css}" />
+<script th:src="@{/jquery/jquery-3.5.1.min.js}"></script>
+<script th:src="@{/bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js}"></script>
+
+<link rel="stylesheet" th:href="@{/css/app.css}" />
+	</head>
+
+	<style>
+.set_width {
+	width: 1205px;
+	margin: 0px auto;
+}
+
+.header_item {
+	padding: 0px 20px 0px 0px;
+	color: #363636;
+	font-size: 11px;
+	height: 30px;
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.nav_item {
+	color: #363636;
+	font-size: 13px;
+	display: table-cell;
+	vertical-align: middle;
+	font-weight: bolder;
+	padding: 16px;
+}
+
+.footer_item {
+	width: 150px;
+	font-size: 11px;
+	padding: 5px 40px 5px 0px;
+}
+
+.footer_text {
+	font-size: 10px;
+	color: #555555;
+}
+
+.footer_text_space {
+	margin: 0px 8px;
+	color: rgba(0, 0, 0, 0.4);
+}
+
+.nav ul, .nav li {
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+}
+
+.nav a {
+	text-decoration: none;
+	color: black;
+	font-size: 14px;
+}
+
+.nav li {
+	list-style: none;
+}
+
+.nav {
+	display: inline-block;
+	position: relative;
+	cursor: default;
+}
+/* Menu List */
+.nav>li {
+	display: block;
+	float: left;
+}
+
+.nav>li>a {
+	position: relative;
+	display: block;
+	padding: 0 50px;
+	line-height: 54px;
+	font-size: 13px;
+	color: black;
+	background: white;
+}
+/* Menu Dropdown */
+.nav>li>div {
+	position: absolute;
+	display: block;
+	width: 120%;
+	height: 400px;
+	top: 50px;
+	left: 0;
+	background-color: rgba(255, 255, 255, 0.5);
+	visibility: hidden;
+	overflow: hidden;
+	background: #ffffff;
+	border-radius: 0 0 3px 3px;
+}
+
+.nav>li:hover>div {
+	opacity: 1;
+	visibility: visible;
+	overflow: visible;
+}
+/* Menu Content Styles */
+.nav .nav-column {
+	float: left;
+	height: 180px;
+	width: 32%;
+	padding-left: 2.5%;
+}
+
+.nav .nav-column li a {
+	display: block;
+	line-height: 26px;
+	font-size: 13px;
+	color: #888888;
+}
+
+.nav .nav-column li a:hover {
+	color: #666666;
+}
+</style>
+
+	<body>
+		<header
+			style="position: fixed; width: 100%; background-color: white; z-index: 1;">
+			<div class="set_width">
+				<a th:href="@{/home}" class="header_item">HOME</a>
+
+				<th:block sec:authorize="isAnonymous()">
+					<a th:href="@{/loginForm}" class="header_item">로그인</a>
+				</th:block>
+				<th:block sec:authorize="isAuthenticated()">
+					<form name="logoutForm" method="post" th:action="@{/logout}"
+						style="display: table-cell;">
+						<input type="hidden" name="${_csrf.parameterName}"
+							value="${_csrf.token}" /> <a class="header_item"
+							href="javascript:logoutForm.submit();">로그아웃</a>
+					</form>
+					<a th:href="@{/member/myorders}" class="header_item">마이페이지</a>
+				</th:block>
+				<div class="header_item">LANGUAGE(KR)</div>
+			</div>
+			<div style="width: 100%; border-bottom: 1px solid rgba(0, 0, 0, 0.1)"></div>
+			<div class="set_width">
+
+				<div style="display: table-cell; vertical-align: middle;">
+					<a
+						style="font-weight: bolder; color: #444444; font-size: 20px; width: 260px; height: 60px; cursor: pointer;"
+						th:href="@{/home}">| THE | HANDSOME |</a>
+				</div>
+
+				<div id="menu-wrapper"
+					style="width: 860px; height: 60px; display: table-cell; vertical-align: middle">
+					<ul class="nav">
+						<li><a href="">브랜드</a>
+							<div id="brand_nav"></div> <script th:inline="javascript">
+                     $(window).ready(function () {
+                        $.ajax({
+                           //backEnd에서 받을 요청 URL
+                           url: [[@{/getBrandList}]]
+                        }).done((data) => {
+                           if (data.result === "loadFail") {
+                              window.alert("브랜드를 찾을 수 없습니다.");
+                           } else {
+                              let brand_array = data.brands;
+                              let html_tmp = "";
+                              
+                              for (let i = 0; i < brand_array.length / 5; i++) {
+                                 let tmp = "";
+                                    tmp += "<div class='nav-column'>";
+                                    tmp += "<ul>";
+                                    
+                                 for (let j = 0; j < 5; j++) {
+                                    let idx = i * 5 + j;
+                                    tmp += "<li><a href='" + [[@{/product/brandproductlist}]] + "?bName=" + encodeURI(brand_array.at(idx).bname) + "&pageNo=1'>" + brand_array.at(idx).bname + "</a></li>";
+                                 }
+                                 
+                                 tmp += "</ul>";
+                                 tmp += "</div>";
+                                 
+                                 html_tmp += tmp;
+                              }
+                              
+                              $("#brand_nav").html(html_tmp);
+                           }
+                        });
+                     });
+                  </script></li>
+						<li><a
+							th:href="@{/product/productlist(cLarge=WOMEN, cMedium=none, cSmall=none, pageNo=1)}">여성</a>
+							<div id="women_category"></div> <script>
+                     $(window).ready(function () {
+                        $.ajax({
+                           url: "[(@{/getCategoryList(cLarge=WOMEN)})]"
+                        }).done((data) => {
+                        	console.log(data);
+                        	
+                           let tmp_html = "";
+                           let data_array = data.WOMEN;
+                           
+                           for (let i = 0; i < data_array.length; i++) {
+                              let data_medium = data_array.at(i);
+                              let medium_array = Object.getOwnPropertyNames(data_medium);
+                              let tmp = "<div class='nav-column'>";
+                              tmp += "   <p><a href='" + "[[@{/product/productlist}]]" + "?cLarge=WOMEN&cMedium=" + medium_array[0] + "&cSmall=none&pageNo=1'>" + medium_array[0] + "</a></p>";
+                              tmp += "   <ul>";
+                              for (let j = 0; j < data_medium[medium_array[0]].length; j++) {
+                                 let csmall = data_medium[medium_array[0]].at(j);
+                                 tmp += "      <li><a href='" + "[[@{/product/productlist}]]" + "?cLarge=WOMEN&cMedium=" + medium_array[0] + "&cSmall=" + csmall + "&pageNo=1'>" + csmall + "</a></li>";
+                              }
+                              tmp += "   </ul>";
+                              tmp += "</div>";
+                              tmp_html += tmp;
+                           }
+                           
+                           $("#women_category").html(tmp_html);
+                        });
+                     });
+                  </script></li>
+						<li><a
+							th:href="@{/product/productlist(cLarge=MEN, cMedium=none, cSmall=none, pageNo=1)}">남성</a>
+							<div id="men_category"></div> <script>
+                     $(window).ready(function () {
+                        $.ajax({
+                           url: "[(@{/getCategoryList(cLarge=MEN)})]"
+                        }).done((data) => {
+                           let tmp_html = "";
+                           let data_array = data.MEN;
+                           
+                           for (let i = 0; i < data_array.length; i++) {
+                              let data_medium = data_array.at(i);
+                              let medium_array = Object.getOwnPropertyNames(data_medium);
+                              let tmp = "<div class='nav-column'>";
+                              tmp += "   <p><a href='" + "[[@{/product/productlist}]]" + "?cLarge=MEN&cMedium=" + medium_array[0] + "&cSmall=none&pageNo=1'>" + medium_array[0] + "</a></p>";
+                              tmp += "   <ul>";
+                              for (let j = 0; j < data_medium[medium_array[0]].length; j++) {
+                                 let csmall = data_medium[medium_array[0]].at(j);
+                                 tmp += "      <li><a href='" + "[[@{/product/productlist}]]" + "?cLarge=MEN&cMedium=" + medium_array[0] + "&cSmall=" + csmall + "&pageNo=1'>" + csmall + "</a></li>";
+                              }
+                              tmp += "   </ul>";
+                              tmp += "</div>";
+                              tmp_html += tmp;
+                           }
+                           
+                           $("#men_category").html(tmp_html);
+                        });
+                     });
+                  </script></li>
+						<li><a
+							th:href="@{/product/productlist(cLarge=KIDS, cMedium=none, cSmall=none, pageNo=1)}">키즈</a>
+							<div id="kids_category"></div> <script>
+                     $(window).ready(function () {
+                        $.ajax({
+                           url: "[(@{/getCategoryList(cLarge=KIDS)})]"
+                        }).done((data) => {
+                           let tmp_html = "";
+                           let data_array = data.KIDS;
+                           
+                           for (let i = 0; i < data_array.length; i++) {
+                              let data_medium = data_array.at(i);
+                              let medium_array = Object.getOwnPropertyNames(data_medium);
+                              let tmp = "<div class='nav-column'>";
+                              tmp += "   <p><a href='" + "[[@{/product/productlist}]]" + "?cLarge=KIDS&cMedium=" + medium_array[0] + "&cSmall=none&pageNo=1'>" + medium_array[0] + "</a></p>";
+                              tmp += "   <ul>";
+                              for (let j = 0; j < data_medium[medium_array[0]].length; j++) {
+                                 let csmall = data_medium[medium_array[0]].at(j);
+                                 tmp += "      <li><a href='" + "[[@{/product/productlist}]]" + "?cLarge=KIDS&cMedium=" + medium_array[0] + "&cSmall=" + csmall + "&pageNo=1'>" + csmall + "</a></li>";
+                              }
+                              tmp += "   </ul>";
+                              tmp += "</div>";
+                              tmp_html += tmp;
+                           }
+                           
+                           $("#kids_category").html(tmp_html);
+                        });
+                     });
+                  </script></li>
+						<li><a
+							th:href="@{/product/productlist(cLarge=LIFESTYLE, cMedium=none, cSmall=none, pageNo=1)}">라이프스타일</a>
+							<div id="lifestyle_category"></div> <script>
+                     $(window).ready(function () {
+                        $.ajax({
+                           url: "[(@{/getCategoryList(cLarge=LIFESTYLE)})]"
+                        }).done((data) => {
+                           let tmp_html = "";
+                           let data_array = data.LIFESTYLE;
+                           
+                           for (let i = 0; i < data_array.length; i++) {
+                              let data_medium = data_array.at(i);
+                              let medium_array = Object.getOwnPropertyNames(data_medium);
+                              let tmp = "<div class='nav-column'>";
+                              tmp += "   <p><a href='" + "[[@{/product/productlist}]]" + "?cLarge=LIFESTYLE&cMedium=" + medium_array[0] + "&cSmall=none&pageNo=1'>" + medium_array[0] + "</a></p>";
+                              tmp += "   <ul>";
+                              for (let j = 0; j < data_medium[medium_array[0]].length; j++) {
+                                 let csmall = data_medium[medium_array[0]].at(j);
+                                 tmp += "      <li><a href='" + "[[@{/product/productlist}]]" + "?cLarge=LIFESTYLE&cMedium=" + medium_array[0] + "&cSmall=" + csmall + "&pageNo=1'>" + csmall + "</a></li>";
+                              }
+                              tmp += "   </ul>";
+                              tmp += "</div>";
+                              tmp_html += tmp;
+                           }
+                           
+                           $("#lifestyle_category").html(tmp_html);
+                        });
+                     });
+                  </script></li>
+					</ul>
+				</div>
+			</div>
+		</header>
+
+		<!-- ############################################### -->
+		<div style="padding-top: 120px;">
+			<th:block th:replace="${content}"></th:block>
+		</div>
+		<!-- ############################################### -->
+
+		<footer>
+			<div style="width: 100%; border-bottom: 1px solid rgba(0, 0, 0, 0.1)"></div>
+			<div class="set_width">
+				<div style="margin-top: 20px">
+					<div class="d-flex">
+						<div>
+							<a
+								style="font-weight: bolder; color: #444444; font-size: 20px; width: 260px; height: 60px; display: table-cell; vertical-align: middle; cursor: pointer;"
+								th:href="@{/home}">| THE | HANDSOME |</a>
+						</div>
+						<div>
+							<div class="footer_item">온라인 멤버십</div>
+							<div class="footer_item">한섬 VVIP 혜택</div>
+							<div class="footer_item">한섬 마일리지 혜택</div>
+							<div class="footer_item">한섬 쿠폰 혜택</div>
+							<div class="footer_item">반품&환불 안내</div>
+						</div>
+						<div>
+							<div class="footer_item">고객센터</div>
+							<div class="footer_item">FAQ</div>
+							<div class="footer_item">수선진행조회</div>
+						</div>
+						<div>
+							<div class="footer_item">주문배송조회</div>
+							<div class="footer_item">취소/반품</div>
+							<div class="footer_item">위시리스트</div>
+						</div>
+						<div>
+							<div class="footer_item">회사소개</div>
+							<div class="footer_item">브랜드소개</div>
+							<div class="footer_item">투자정보</div>
+							<div class="footer_item">채용정보</div>
+							<div class="footer_item">동반성장</div>
+						</div>
+						<div style="width: 100px"></div>
+						<div>
+							<div class="footer_item">
+								<span style="color: red">★</span> 매장안내
+							</div>
+							<div class="footer_item">
+								<span style="color: orange">★</span> 룩북
+							</div>
+							<div class="footer_item">
+								<span style="color: green">★</span> 비디오
+							</div>
+							<div class="footer_item">
+								<span style="color: blue">★</span> 인스타그램
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="height: 30px"></div>
+			<div style="background-color: #f5f5f5; padding: 30px">
+				<div class="set_width">
+					<div class="d-flex">
+						<div class="footer_text" style="font-size: 11px; color: #444444">
+							서비스 이용약관</div>
+						<div style="width: 30px"></div>
+						<div class="footer_text"
+							style="font-size: 11px; font-weight: bolder; color: #444444">
+							개인정보처리방침</div>
+					</div>
+					<div class="d-flex" style="margin-top: 15px">
+						<div class="footer_text">현대IT&E 5팀</div>
+						<div class="footer_text footer_text_space">|</div>
+						<div class="footer_text">팀원 : 서민철, 변용혁, 서회형, 이수정</div>
+						<div class="footer_text footer_text_space">|</div>
+						<div class="footer_text">서울시 강남구 도산대로 523 한섬빌딩</div>
+						<div class="footer_text footer_text_space">|</div>
+						<div class="footer_text">TEL 1800-5700</div>
+						<div class="footer_text footer_text_space">|</div>
+						<div class="footer_text">FAX 02-6078-2856</div>
+					</div>
+					<div class="d-flex" style="margin-top: 5px">
+						<div class="footer_text">사업자등록번호 120-81-26337</div>
+						<div class="footer_text footer_text_space">|</div>
+						<div class="footer_text">통신판매업신고번호 강남 제 00826호</div>
+						<div class="footer_text footer_text_space">|</div>
+						<div class="footer_text">개인정보관리책임자 홍길동</div>
+						<div class="footer_text footer_text_space">|</div>
+						<div class="footer_text">호스팅서비스 : (주)한섬</div>
+					</div>
+					<div class="d-flex" style="margin-top: 15px">
+						<div class="footer_text">COPYRIGHT ⓒ 2017 HANDSOME ALL RIGHT
+							RESERVED.</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</body>
+</th:block>
+
+</html>

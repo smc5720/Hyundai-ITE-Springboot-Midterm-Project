@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mycompany.webapp.dao.MemberDao">
+	<select id="selectMno" resultType="int"
+		parameterType="String">
+		SELECT mno
+		FROM member
+		WHERE mid = #{mid}
+	</select>
+	
+	<select id="selectMember" resultType="member"
+		parameterType="int">
+		SELECT mname, mtel, memail
+		FROM member
+		WHERE mno = #{mno}
+	</select>
+</mapper>

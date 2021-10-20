@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:replace="~{/common/layout::setContent(~{this::content})}">
+<th:block th:fragment="content">	
+	
+<div class="card m-2">
+	<div class="card-header">
+		접근 거부됨
+	</div>
+	<div class="card-body">
+		<a th:href="@{/security/content}" class="btn btn-info btn-sm">/security/content</a>
+	</div>
+</div>
+
+</th:block>
+</th:block>
+</html>

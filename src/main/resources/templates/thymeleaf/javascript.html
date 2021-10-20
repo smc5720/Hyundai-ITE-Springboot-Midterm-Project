@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common/layout::setContent(~{this::content})}">
+<th:block th:fragment="content">
+
+<div class="card m-2">
+	<div class="card-header">JavaScript 코드삽입</div>
+	<div class="card-body">
+		<script th:inline="javascript">
+			let name=[[${name}]];
+			console.log("name: ", name);
+			
+			let hobby = [[${hobby}]]
+			console.log("hobby: ", hobby);
+			
+			let board = [[${board}]]
+			console.log("board: ", board);
+			
+			let jsonBoard = JSON.parse([[${jsonBoard}]]);
+			console.log("jsonBoard: ", jsonBoard);
+		</script>
+		
+		<script>		
+			let data = "타임리프";
+			let message = `클라이언트 데이터 바인딩: ${data}`;
+			console.log("message: ", message);
+		</script>
+	</div>
+</div>
+
+</th:block>
+</th:block>
+</html>

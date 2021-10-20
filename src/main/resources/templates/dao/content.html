@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/common/layout::setContent(~{this::content})}">
+<th:block th:fragment="content">
+
+<div class="card m-2">
+	<div class="card-header">데이터베이스 접근 객체</div>
+	<div class="card-body">
+		<a th:href="boardList" class="btn btn-info">게시판</a>
+	</div>
+</div>
+
+</th:block>
+</th:block>
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mycompany.webapp.dao.CategoryDao">
+	<select id="selectCategoryMedium" resultType="category" parameterType="category">
+        SELECT cmedium from category
+	    WHERE clarge = #{cLarge}
+	    AND cmedium NOT IN('SPECIAL SHOP')
+	    GROUP BY clarge, cmedium
+	</select>
+	
+	<select id="selectCategorySmall" resultType="category" parameterType="category">
+    	SELECT csmall from category
+    	WHERE clarge = #{cLarge}
+    	AND cmedium = #{cMedium}
+    	GROUP BY clarge, cmedium, csmall
+    	
+	</select>
+</mapper>

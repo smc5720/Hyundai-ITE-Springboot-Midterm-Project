@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/common/layout::setContent(~{this::content})}">
+	<th:block th:fragment="content">
+
+		<div class="card m-2">
+			<div class="card-header">기본 내장 객체</div>
+			<div class="card-body">
+				<div>
+					<h6 class="text-info">param 정보 얻기</h6>
+					<div>param total number : [[${param.size()}]]</div>
+					<div>param bno : [[${param.bno}]]</div>
+					<div>param pageNo : [[${param.pageNo}]]</div>
+				</div>
+				<hr>
+				<div>
+					<h6 class="text-info">request 속성값 얻기</h6>
+					<div>title : [[${title}]]</div>
+					<div>title : [[${#request.getAttribute("title")}]]</div>
+				</div>
+				<hr>
+				<div>
+					<h6 class="text-info">session 속성값 얻기</h6>
+					<div>current User : [[${session.sessionMid}]]</div>
+					<div>current User :
+						[[${#session.getAttribute("sessionMid")}]]</div>
+				</div>
+				<hr>
+				<div>
+					<h6 class="text-info">application 속성값 얻기</h6>
+					<div>visitor count : [[${application.visitorCount}]]</div>
+					<div>visitor count :
+						[[${#servletContext.getAttribute("visitorCount")}]]</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card m-2">
+			<div class="card-header">유틸리티 내장 객체</div>
+			<div class="card-body">
+				<div>
+					<h6 class="text-info">#dates</h6>
+					<div>포맷 문자열: [[${#dates.format(today, 'yyy/MM/dd HH:mm')}]]</div>
+					<div>일: [[${#dates.day(today)}]]</div>
+					<div>월: [[${#dates.month(today)}]]</div>
+					<div>월: [[${#dates.monthName(today)}]]</div>
+					<div>월: [[${#dates.monthNameShort(today)}]]</div>
+					<div>년: [[${#dates.year(today)}]]</div>
+					<div>요일: [[${#dates.dayOfWeek(today)}]]</div>
+					<div>요일: [[${#dates.dayOfWeekName(today)}]]</div>
+					<div>요일: [[${#dates.dayOfWeekNameShort(today)}]]</div>
+					<div>시: [[${#dates.hour(today)}]]</div>
+					<div>분: [[${#dates.minute(today)}]]</div>
+					<div>초: [[${#dates.second(today)}]]</div>
+					<div>밀리초: [[${#dates.millisecond(today)}]]</div>
+				</div>
+				<hr />
+				<div>
+					<h6 class="text-info">#numbers</h6>
+					<div>[[${#numbers.formatInteger(1000000, 3, 'COMMA')}]]</div>
+					<div>[[${#numbers.formatDecimal(1000000.12345, 3, 2)}]]</div>
+					<div>[[${#numbers.formatDecimal(1000000.12345, 3, 'COMMA', 2,
+						'POINT')}]]</div>
+				</div>
+				<hr />
+				<div>
+					<h6 class="text-info">#arrays</h6>
+					<div>[[${#arrays.length(array)}]]</div>
+					<div>[[${#arrays.isEmpty(array)}]]</div>
+					<div>[[${#arrays.contains(array, 'boot')}]]</div>
+				</div>
+				<hr />
+				<div>
+					<h6 class="text-info">#lists</h6>
+					<div>[[${#lists.size(array)}]]</div>
+					<div>[[${#lists.isEmpty(array)}]]</div>
+					<div>[[${#lists.contains(array, 'boot')}]]</div>
+				</div>
+			</div>
+		</div>
+
+	</th:block>
+</th:block>
+</html>

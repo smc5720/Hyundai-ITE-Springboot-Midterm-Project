@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/common/layout::setContent(~{this::content})}">
+	<th:block th:fragment="content">
+
+		<div class="card m-2">
+			<div class="card-header">반복 처리</div>
+			<div class="card-body">
+				<table class="table table-sm table-bordered">
+					<tr>
+						<th class="text-center" style="width: 70px">글번호</th>
+						<th class="text-center">글제목</th>
+						<th class="text-center" style="width: 120px">글쓴이</th>
+						<th class="text-center" style="width: 90px">쓴날짜</th>
+					</tr>
+					<tr th:each="board : ${list}">
+						<td class="text-center">[[${board.bno}]]</td>
+						<td><a th:href="@{iteration(bno=${board.bno})}">[[${board.btitle}]]</a></td>
+						<td class="text-center">[[${board.mid}]]</td>
+						<td class="text-center">[[${#dates.format(board.bdate, 'yyyy.MM.dd')}]]</td>
+					</tr>
+				</table>
+				
+				<hr>
+				
+				<th:block th:each="board, status : ${list}">
+					<th:block th:if="${status.first}">
+						<table class="table table-sm table-bordered">
+							<tr>
+								<th class="text-center" style="width: 70px">순번</th>
+								<th class="text-center" style="width: 70px">글번호</th>
+								<th class="text-center">글제목</th>
+								<th class="text-center" style="width: 120px">글쓴이</th>
+								<th class="text-center" style="width: 90px">쓴날짜</th>
+							</tr>
+					</th:block>
+					<tr th:class="${status.odd}? 'bg-light': ''">
+						<td class="text-center">[[${status.count}]]</td>
+						<td class="text-center">[[${board.bno}]]</td>
+						<td><a th:href="@{iteration(bno=${board.bno})}">[[${board.btitle}]]</a></td>
+						<td class="text-center">[[${board.mid}]]</td>
+						<td class="text-center">[[${#dates.format(board.bdate, 'yyyy.MM.dd')}]]</td>
+					</tr>					
+					<th:block th:if="${status.last}">
+						</table>
+					</th:block>
+				</th:block>
+			</div>
+		</div>
+
+	</th:block>
+</th:block>
+</html>

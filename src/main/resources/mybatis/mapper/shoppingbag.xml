@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mycompany.webapp.dao.ShoppingbagDao">
+	<insert id="insertProduct" parameterType="shoppingbag">
+		INSERT INTO
+		shoppingbag(SBNO, SBPRODUCTCOLOR, SBPRODUCTSIZE, SBPRODUCTAMOUNT, MNO,
+		PCODE)
+		VALUES(sbno_seq.nextval, #{sbproductcolor}, #{sbproductsize},
+		#{sbproductamount}, #{mno},
+		#{pcode})
+	</insert>
+
+	<update id="updateProduct" parameterType="shoppingbag">
+		UPDATE shoppingbag
+		SET
+		sbproductcolor = #{sbproductcolor},
+		sbproductamount = #{sbproductamount},
+		sbproductsize = #{sbproductsize}
+		WHERE sbno = #{sbno}
+	</update>
+
+	<delete id="deleteProduct" parameterType="int">
+		DELETE FROM shoppingbag
+		WHERE sbno = #{sbno}
+	</delete>
+
+	<select id="selectProductNo" parameterType="shoppingbag"
+		resultType="int">
+		SELECT sbno
+		FROM shoppingbag
+		WHERE mno = #{mno}
+		AND pcode = #{pcode}
+		AND sbproductcolor = #{sbproductcolor}
+		AND sbproductsize = #{sbproductsize}
+		UNION ALL
+		SELECT -1 as sbno
+		FROM dual
+		WHERE NOT EXISTS( SELECT sbno
+		                  FROM shoppingbag
+		                  WHERE mno = #{mno}
+		                  AND pcode = #{pcode}
+		                  AND sbproductcolor = #{sbproductcolor}
+		                  AND sbproductsize = #{sbproductsize} )
+	</select>
+
+	<select id="selectShoppingProducts" parameterType="int"
+		resultType="shoppingbag">
+		SELECT SBNO, SBPRODUCTCOLOR, SBPRODUCTSIZE,
+		SBPRODUCTAMOUNT, MNO, PCODE
+		FROM shoppingbag
+		WHERE mno = #{mno}
+		ORDER BY
+		sbno DESC
+	</select>
+	<select id="selectShoppingProduct" parameterType="int"
+		resultType="shoppingbag">
+		SELECT SBNO, SBPRODUCTCOLOR, SBPRODUCTSIZE,
+		SBPRODUCTAMOUNT, MNO, PCODE
+		FROM shoppingbag
+		WHERE sbno = #{sbno}
+	</select>
+</mapper>

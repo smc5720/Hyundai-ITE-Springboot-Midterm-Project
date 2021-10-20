@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/common/layout::setContent(~{this::content})}">
+	<th:block th:fragment="content">
+
+		<div class="card m-2">
+			<div class="card-header">게시물 내용</div>
+			<div class="card-body">
+				<div>
+					<div>
+						<span>번호:</span> <span>[[${board.bno}]]</span> <br /> <span>제목:</span>
+						<span>[[${board.btitle}]]</span> <br /> <span>글쓴이:</span> <span>[[${board.mid}]]</span>
+						<br /> <span class="title">날짜:</span> <span>[[${#dates.format(board.bdate,
+							"yyyy-MM-dd")}]]</span> <br />
+
+						<hr />
+						<div>[(${board.bcontent})]</div>
+						<hr />
+						<div>첨부파일 : 
+							<a th:if="${board.battachoname != null}" 
+								th:href="@{battachDownload(bno=${board.bno})}">[[${board.battachoname}]]</a>
+						</div>
+					</div>
+
+					<div class="mt-3">
+						<a class="btn btn-info btn-sm mt-2" href="boardList">목록</a> <a
+							class="btn btn-info btn-sm mt-2"
+							th:href="'boardUpdateForm?bno=' + ${board.bno}">수정</a> <a
+							class="btn btn-info btn-sm mt-2"
+							th:href="'boardDelete?bno=' + ${board.bno}">삭제</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</th:block>
+</th:block>
+</html>

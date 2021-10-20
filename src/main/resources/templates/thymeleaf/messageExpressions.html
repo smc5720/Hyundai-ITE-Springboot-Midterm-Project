@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common/layout::setContent(~{this::content})}">
+<th:block th:fragment="content">
+
+<div class="card m-2">
+	<div class="card-header">MessageExpressions</div>
+	<div class="card-body">
+		<h6>[[#{welcome}]]</h6>
+		<button class="btn btn-info">[[#{btn.join}]]</button>
+		<button class="btn btn-info" th:text="#{btn.join}"></button>
+	</div>
+</div>
+
+</th:block>
+</th:block>
+</html>

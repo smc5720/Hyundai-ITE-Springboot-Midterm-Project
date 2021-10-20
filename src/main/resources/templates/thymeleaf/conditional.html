@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/common/layout::setContent(~{this::content})}">
+	<th:block th:fragment="content">
+
+		<div class="card m-2">
+			<div class="card-header">Conditional Evaluation</div>
+			<div class="card-body">
+				<th:block th:if="${session.sessionMid == null}">
+					<a href="conditional?option=true" class="btn btn-info btn-sm">로그인</a>
+				</th:block>
+				<th:block th:if="${session.sessionMid != null}">
+					<a href="conditional?option=false" class="btn btn-info btn-sm">로그아웃</a>
+				</th:block>
+
+				<hr>
+
+				<ul>
+					<th:block th:switch="${type}">
+						<th:block th:case="a">
+							<li>type-a-1</li>
+							<li>type-a-2</li>
+						</th:block>
+						<th:block th:case="b">
+							<li>type-b-1</li>
+							<li>type-b-2</li>
+						</th:block>
+						<th:block th:case="*">
+							<li>type-1</li>
+							<li>type-2</li>
+						</th:block>
+					</th:block>
+				</ul>
+			</div>
+		</div>
+
+	</th:block>
+</th:block>
+</html>

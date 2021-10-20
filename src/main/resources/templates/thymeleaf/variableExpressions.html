@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common/layout::setContent(~{this::content})}">
+<th:block th:fragment="content">
+
+<div class="card m-2">
+	<div class="card-header">Title</div>
+	<div class="card-body">
+		<div>Login ID : [[${session.sessionMid}]]</div>
+		<div>
+			<a th:if="${session.sessionMid == null}" href="variableExpressions" class="btn btn-success">로그인</a>
+			<a th:if="${session.sessionMid != null}" href="variableExpressions" class="btn btn-warning">로그아웃</a>
+		</div>
+		<div>
+			<div th:text="${'Current user: '+ session.sessionMid}"></div>
+			<div th:text="'Current user: ' + ${session.sessionMid}"></div>
+			<div th:text="|Current user: ${session.sessionMid}|"></div>
+			
+			<div th:text="'Current user: ' + ((${session.sessionMid})? ${session.sessionMid}: ' ')"></div>
+			<div>Current user : [[${session.sessionMid}]]</div>
+		</div>
+	</div>
+</div>
+
+</th:block>
+</th:block>
+</html>

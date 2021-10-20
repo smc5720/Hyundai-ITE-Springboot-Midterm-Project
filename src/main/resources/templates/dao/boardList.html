@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/common/layout::setContent(~{this::content})}">
+	<th:block th:fragment="content">
+
+		<div class="card m-2">
+			<div class="card-header">Title</div>
+			<div class="card-body">
+				<table class="table table-sm table-bordered">
+					<tr>
+						<th class="text-center" style="width: 70px">글번호</th>
+						<th class="text-center">글제목</th>
+						<th class="text-center" style="width: 120px">글쓴이</th>
+						<th class="text-center" style="width: 100px">쓴날짜</th>
+					</tr>
+					<tr th:each="board:${boards}">
+						<td class="text-center">[[${board.bno}]]</td>
+						<td><a th:href="@{boardDetail(bno=${board.bno})}">[[${board.btitle}]]</a></td>
+						<td class="text-center">[[${board.mid}]]</td>
+						<td class="text-center">[[${#dates.format(board.bdate, 'yyyy.MM.dd')}]]</td>
+					</tr>
+					<tr>
+						<td colspan="4" class="text-center">
+							<div>
+								<a href="boardList?pageNo=1">처음</a>
+								<a th:if="${pager.groupNo>1}" th:href="@{boardList(pageNo=${pager.startPageNo-1})}">이전</a>
+								
+								<th:block th:each="i:${#numbers.sequence(pager.startPageNo, pager.endPageNo)}">
+									<a th:class="(${pager.pageNo != i})? 'btn btn-outline-success btn-sm' : 'btn btn-success btn-sm'" 
+										th:href="@{boardList(pageNo=${i})}">[[${i}]]</a>								
+								</th:block>
+
+								<a th:if="${pager.groupNo<pager.totalGroupNo}" th:href="@{boardList(pageNo=${pager.endPageNo+1})}">다음</a>													
+								<a th:href="@{boardList(pageNo=${pager.totalPageNo})}">끝</a>
+							</div>
+						</td>
+					</tr>
+				</table>
+				
+				<div class="mt-2">
+					<a href="boardWriteForm" class="btn">새글쓰기</a>
+				</div>
+			</div>
+		</div>
+
+	</th:block>
+</th:block>
+</html>

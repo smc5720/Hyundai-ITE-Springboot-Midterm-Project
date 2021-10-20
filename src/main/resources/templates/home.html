@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common/layout::setContent(~{this::#content})}">
+
+<div id="content" class="card">
+	<div class="card-header">Title</div>
+	<div class="card-body">
+		<img alt="" th:src="@{/images/logo-springboot.png}" width="100px">
+	</div>
+</div>
+
+</th:block>
+</html>

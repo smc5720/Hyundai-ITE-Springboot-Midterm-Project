@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common/layout::setContent(~{this::content})}">
+	<th:block th:fragment="content">
+
+		<div class="card m-2">
+			<div class="card-header">Selection Variable Expressions</div>
+			<div class="card-body">
+				<th:block th:object="${board}">
+					<div>bno: [[*{bno}]]</div>
+					<div>btitle: [[*{btitle}]]</div>
+					<div>bcontent: [[*{bcontent}]]</div>
+					<div>bcontent(unescaped): [(*{bcontent})]</div>
+					<div>mid: [[*{mid}]]</div>
+					<div>bdate: [[*{#dates.format(bdate, 'yyyy.MM.dd')}]]</div>
+				</th:block>
+			</div>
+		</div>
+
+	</th:block>
+</th:block>
+</html>
