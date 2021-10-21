@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import com.mycompany.webapp.dto.Product;
 import com.mycompany.webapp.dto.ProductColor;
 import com.mycompany.webapp.dto.ProductOrder;
 import com.mycompany.webapp.dto.ShoppingBag;
+import com.mycompany.webapp.security.CustomUserDetails;
 import com.mycompany.webapp.service.AddressService;
 import com.mycompany.webapp.service.MemberService;
 import com.mycompany.webapp.service.OrderService;
@@ -52,8 +54,11 @@ public class OrderController {
 	private AddressService addressService;
 
 	@RequestMapping("/ordering")
-	public String order(HttpSession session, HttpServletRequest request) {
+	public String order(HttpSession session, HttpServletRequest request, Authentication authentication) {
 		logger.info("실행");
+
+		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+		int mno = customUserDetails.getMno();
 
 		// 결제 총액을 저장한다.
 		int total = 0;
@@ -98,7 +103,7 @@ public class OrderController {
 		request.setAttribute("total", total);
 		request.setAttribute("post", post);
 
-		Member member = memberService.getMember(Integer.parseInt(session.getAttribute("mno").toString()));
+		Member member = memberService.getMember(mno);
 		String tel = member.getMtel();
 		tel = tel.substring(0, 3) + "-" + tel.substring(3, 7) + "-" + tel.substring(7);
 		member.setMtel(tel);
@@ -109,10 +114,12 @@ public class OrderController {
 
 	@RequestMapping("/orderpayment")
 	public String orderPayment(String ptype, String apostcode, String aaddress1, String aaddress2, String oreceivername,
-			String oreceivertel1, String oreceivertel2, String ocomment, int ano, HttpSession session) {
+			String oreceivertel1, String oreceivertel2, String ocomment, int ano, HttpSession session,
+			Authentication authentication) {
 		logger.info("실행");
 
-		int mno = Integer.parseInt(session.getAttribute("mno").toString());
+		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+		int mno = customUserDetails.getMno();
 
 		ProductOrder productOrder = new ProductOrder();
 		productOrder.setPtype(ptype);

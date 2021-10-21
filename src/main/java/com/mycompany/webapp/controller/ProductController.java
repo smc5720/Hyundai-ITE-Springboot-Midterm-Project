@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import com.mycompany.webapp.dto.ProductColor;
 import com.mycompany.webapp.dto.ProductSize;
 import com.mycompany.webapp.dto.ShoppingBag;
 import com.mycompany.webapp.dto.Stock;
+import com.mycompany.webapp.security.CustomUserDetails;
 import com.mycompany.webapp.service.ProductService;
 import com.mycompany.webapp.service.ShoppingbagService;
 
@@ -230,7 +232,7 @@ public class ProductController {
 	@RequestMapping("/exitPage")
 	@ResponseBody
 	public void exitPage(String pcode) {
-		logger.info(pcode);
+
 		if (viewers.get(pcode) == 1) {
 			viewers.remove(pcode);
 		} else {
@@ -263,9 +265,12 @@ public class ProductController {
 	ShoppingbagService shoppingbagService;
 
 	@RequestMapping("/insertToShoppingbag")
-	public String insertToShoppingbag(ShoppingBag shoppingBag, HttpSession session) {
+	public String insertToShoppingbag(ShoppingBag shoppingBag, HttpSession session, Authentication authentication) {
 
-		shoppingBag.setMno(Integer.parseInt(session.getAttribute("mno").toString()));
+		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+		int mno = customUserDetails.getMno();
+
+		shoppingBag.setMno(mno);
 
 		// 이미 같은 내용의 상품을 넣은 적이 있는지를 확인하기 위해 사용한다.
 		// 이미 있는 내용이라면 해당 sbno 값을 반환하고, 없는 내용이라면 -1을 반환한다.
@@ -284,9 +289,13 @@ public class ProductController {
 	}
 
 	@RequestMapping("/insertToShoppingbagForDirectOrder")
-	public String insertToShoppingbagForDirectOrder(ShoppingBag shoppingBag, HttpSession session) {
+	public String insertToShoppingbagForDirectOrder(ShoppingBag shoppingBag, HttpSession session,
+			Authentication authentication) {
 
-		shoppingBag.setMno(Integer.parseInt(session.getAttribute("mno").toString()));
+		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+		int mno = customUserDetails.getMno();
+
+		shoppingBag.setMno(mno);
 		shoppingbagService.insertShoppingbag(shoppingBag);
 
 		return "redirect:/member/shoppingbagForDirectOrder";

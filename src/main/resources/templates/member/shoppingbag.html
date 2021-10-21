@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common/layout::setContent(~{this::content})}">
+	<th:block th:fragment="content">
+		<h3 class="text-center m-4 border-top p-4">
+			<span>쇼핑백</span>
+		</h3>
+		<div class="container">
+			<table class="table">
+				<thead>
+					<tr class="row bg-light">
+						<th class="col-1 text-center"><input type="checkbox" name=""
+							id="allchecked"></th>
+						<th class="col text-center">상품정보</th>
+						<th class="col-1 text-center">수량</th>
+						<th class="col-1 text-center">판매가</th>
+						<th class="col-1 text-center">적립율</th>
+						<th class="col-1 text-center">선택</th>
+					</tr>
+				</thead>
+				<tbody>
+					<th:block th:each="sb_product : ${shoppingBags}">
+						<form method="post" action="changeProductOption">
+							<tr class="row">
+								<td class="col-1 text-center"><th:block
+										th:if="${sb_product.sbproductamount == 0}">
+										<input type="checkbox" name="sbno-checkbox"
+											th:id="${sb_product.sbno}" disabled
+											onchange="handleSbnoCheckbox(this)">
+									</th:block> <th:block th:if="${sb_product.sbproductamount != 0}">
+										<input type="checkbox" name="sbno-checkbox"
+											th:id="${sb_product.sbno}"
+											onchange="handleSbnoCheckbox(this)">
+									</th:block></td>
+								<td class="col">
+									<div class="card border-white" style="max-width: 540px;">
+										<div class="row no-gutters">
+											<div class="col-md-4">
+												<img class="img-thumbnail"
+													th:src="${sb_product.colors[sb_product.coloridx].cimageproduct1}"
+													alt="product-img">
+											</div>
+											<div class="col-md-8">
+												<input type="hidden" th:value="${sb_product.sbno}"
+													name="sbnoSelected" /> <input type="hidden"
+													th:value="${sb_product.pcode}" name="pcodeSelected" />
+												<div class="card-body">
+													<p class="card-text">[[${sb_product.bname}]]</p>
+													<h6 class="card-title">[[${sb_product.pname}]]</h6>
+													<p class="card-text">
+														<small class="text-muted">color : <select
+															class="custom-select col-4" name="colorSelected"
+															id="colorSelected">
+																<th:block th:each="color : ${sb_product.colors}">
+																	<option selected
+																		th:if="${color.cproductcolor == sb_product.sbproductcolor}"
+																		th:value="${color.cproductcolor}">[[${color.cproductcolor}]]</option>
+																	<option
+																		th:if="${color.cproductcolor != sb_product.sbproductcolor}"
+																		th:value="${color.cproductcolor}">[[${color.cproductcolor}]]</option>
+																</th:block>
+														</select>
+														</small> <small class="text-muted"> size : <select
+															class="custom-select col-4" name="sizeSelected"
+															id="sizeSelected">
+																<th:block th:each="size : ${sb_product.sizes}">
+																	<option selected
+																		th:if="${size.sproductsize == sb_product.sbproductsize}"
+																		th:value="${size.sproductsize}">[[${size.sproductsize}]]</option>
+																	<option
+																		th:if="${size.sproductsize != sb_product.sbproductsize}"
+																		th:value="${size.sproductsize}">[[${size.sproductsize}]]</option>
+																</th:block>
+														</select>
+														</small>
+													</p>
+													<th:block th:if="${sb_product.sbno == session.remainSbno}">
+														<p class="card-text">
+															<small class="text-muted"> <span
+																class="text-danger">남은 수량:
+																	[[${session.remainStock}]]</span>
+															</small>
+														</p>
+													</th:block>
+													<p class="card-text">
+														<small class="text-muted text-right">
+															<button class="btn btn-light btn-sm">옵션변경</button>
+														</small>
+													</p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</td>
+								<td class="col-1 text-center align-middle border-left"><input
+									class="mb-2 text-center" type="number" size="1"
+									style="width: inherit;" name="amountSelected"
+									th:value="${sb_product.sbproductamount}" min="0" />
+									<button class="btn btn-outline-secondary btn-sm"
+										style="width: inherit;">변경</button></td>
+								<td class="col-1 text-center align-middle border-left"
+									th:id="'sbno-price-' + ${sb_product.sbno}"><span>[[${#numbers.formatInteger(sb_product.sbproductamount
+										* sb_product.pprice, 3, 'COMMA')}]]</span></td>
+								<td class="col-1 text-center align-middle border-left">5%</td>
+								<td class="col-1 text-center align-middle border-left"><a
+									class="btn btn-outline-secondary btn-sm"
+									th:href="'deleteshoppingbag?sbnoSelected=' + ${sb_product.sbno}">삭제</a>
+								</td>
+							</tr>
+						</form>
+					</th:block>
+					<script th:inline="javascript">
+						let checkboxes;
+
+						$("#allchecked")
+								.click(
+										function() {
+											if ($(
+													"input:checkbox[id='allchecked']")
+													.prop("checked")) {
+												$(
+														"input[type=checkbox]:not(:disabled)")
+														.prop("checked", true);
+
+											} else {
+												$("input[type=checkbox]").prop(
+														"checked", false);
+											}
+
+											handleSbnoCheckbox();
+										});
+
+						function handleSbnoCheckbox() {
+							checkboxes = $('input:checkbox[name="sbno-checkbox"]:checked');
+
+							let sum = 0;
+							// 배송비
+							let post = 3000;
+							let total = 0;
+
+							for (let i = 0; i < checkboxes.length; i++) {
+								let id = "#sbno-price-" + checkboxes[i].id;
+								// 숫자 내부의 쉼표를 제거한다.
+								sum += parseInt($(id).html().replace(/\D/g, ''));
+							}
+
+							if (sum >= 30000) {
+								post = 0;
+							} else {
+								post = 2500;
+							}
+
+							total = (sum + post).toLocaleString();
+							sum = sum.toLocaleString();
+							$("#product-price-total").html(sum);
+							$("#product-price-all").html(total);
+							$("#product-count").html(checkboxes.length);
+							$("#post-fee").html(post);
+						}
+					</script>
+					<tr>
+						<td>
+							<div class="float-right">
+								<dl class="row">
+									<dt class="col-sm-6">상품합계</dt>
+									<dd class="col-sm-6">
+										￦<span id="product-price-total">0</span>
+									</dd>
+
+									<dt class="col-sm-6">배송비</dt>
+									<dd class="col-sm-6">
+										￦<span id="post-fee">2500</span>
+									</dd>
+								</dl>
+								<div class="row">
+									<dt class="col-sm-6">합계</dt>
+									<dd class="col-sm-6">
+										￦<span id="product-price-all">2500</span>
+									</dd>
+								</div>
+							</div>
+							<div class="float-right mr-5">
+								<div>
+									<dd>
+										총 상품 <span id="product-count">0</span>종
+									</dd>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="text-center">
+								<a href="deleteallshoppingbag" class="btn btn-light">전체 삭제</a>
+								<button onclick="moveOrderPage()" class="btn btn-secondary">선택상품
+									주문하기</button>
+							</div> <script th:inline="javascript">
+								function moveOrderPage() {
+									if (checkboxes === undefined) {
+										alert("구매하실 상품을 선택해주세요.");
+									} else {
+										let checkedItems = "";
+										for (let i = 0; i < checkboxes.length; i++) {
+											checkedItems += checkboxes[i].id
+													+ ",";
+										}
+										location.href = "insertorder?checkedItems="
+												+ checkedItems
+												+ "&itemsLength="
+												+ checkboxes.length;
+									}
+								}
+							</script>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</th:block>
+</th:block>
+</html>

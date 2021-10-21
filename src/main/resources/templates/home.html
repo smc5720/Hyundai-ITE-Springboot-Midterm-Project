@@ -1,13 +1,118 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
+<style>
+li {
+	list-style: none;
+}
+
+.contWrap {
+	min-width: 1024px;
+	max-width: 1280px;
+	margin: 0 auto;
+}
+/* 이벤트 */
+.eventMidBanner {
+	margin: 16px -8px 0;
+}
+
+.eventMidBanner:after {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+.eventMidBanner .banner {
+	float: left;
+	width: 50%;
+}
+
+.eventMidBanner .banner a {
+	position: relative;
+	display: block;
+	margin: 0 8px;
+	height: 260px;
+}
+
+.eventMidBanner .banner .img {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+}
+
+.eventMidBanner .banner .img img {
+	float: right;
+}
+</style>
+
 <th:block th:replace="~{common/layout::setContent(~{this::#content})}">
-
-<div id="content" class="card">
-	<div class="card-header">Title</div>
-	<div class="card-body">
-		<img alt="" th:src="@{/images/logo-springboot.png}" width="100px">
+	<div id="content">
+		<section class="container">
+			<h2 class="text-center">이벤트</h2>
+			<div class="contWrap">
+				<div class="eventMidBanner" id="eventMidBanner"></div>
+			</div>
+			<script th:inline="javascript">
+			$(window).ready(function () {
+				$.ajax({
+					url: [[@{/event/getEventList}]]
+				}).done((data) => {
+					if (data.result === "loadFail") {
+						window.alert("이벤트를 찾을 수 없습니다.");						
+						/* $('#eventMidBanner').html('<div class="spinner-border"></div>'); */
+					} else {
+						const events= data.events;
+						let events_html ="";
+						for(let i=0; i< events.length; i++){
+							let event = events.at(i);
+							let event_html = '<a href="/event/eventdetail?eno='+ event.eno +'"><div class="card banner p-3 border-0">';
+							event_html += '<img class="card-img-top" id="event-img" src="'+ [[@{/images/}]] + event.eimage +'" alt="" />';
+							event_html += '<div class="card-body">';
+							event_html += '<h5 class="card-title text-secondary">'+ event.ename +'</h5>';
+							event_html += '<p class="card-text"><span id="event-content text-secondary">'+ event.econtent +'</span></p>';
+							event_html += '<p class="card-text"><small class="text-muted">이벤트기간 : ';
+							event_html += '<span id="event-period">' + event.estartdate + ' ~ ' + event.eenddate+'</span></small>';
+							event_html += '</p></div></div></a>';
+							
+							events_html += event_html
+						}
+						$('#eventMidBanner').html(events_html);
+					}
+				});
+			});
+		</script>
+		</section>
+		<section id="contents">
+			<h2 class="text-center">About Team 5</h2>
+			<div style="text-align: center;">
+				<div style="display: inline-block; padding: 16px;">
+					<img th:src=@{/images/img1.jpg} style="width: 606.5px" />
+				</div>
+				<div style="display: inline-block; padding: 16px;">
+					<img th:src=@{/images/img2.jpg} style="width: 606.5px" />
+				</div>
+			</div>
+			<div style="text-align: center;">
+				<div style="display: inline-block; padding: 16px;">
+					<img th:src=@{/images/img3.jpg} style="width: 606.5px" />
+				</div>
+				<div style="display: inline-block; padding: 16px;">
+					<img th:src=@{/images/img4.jpg} style="width: 606.5px" />
+				</div>
+			</div>
+			<div style="text-align: center;">
+				<div style="display: inline-block; padding: 16px;">
+					<img th:src=@{/images/img5.jpg} style="width: 606.5px" />
+				</div>
+				<div style="display: inline-block; padding: 16px;">
+					<img th:src=@{/images/img6.jpg} style="width: 606.5px" />
+				</div>
+			</div>
+			<div style="margin-top: 30px"></div>
+		</section>
 	</div>
-</div>
-
 </th:block>
 </html>

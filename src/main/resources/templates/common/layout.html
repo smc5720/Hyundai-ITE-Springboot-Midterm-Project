@@ -204,9 +204,7 @@
                      $(window).ready(function () {
                         $.ajax({
                            url: "[(@{/getCategoryList(cLarge=WOMEN)})]"
-                        }).done((data) => {
-                        	console.log(data);
-                        	
+                        }).done((data) => {                        	
                            let tmp_html = "";
                            let data_array = data.WOMEN;
                            

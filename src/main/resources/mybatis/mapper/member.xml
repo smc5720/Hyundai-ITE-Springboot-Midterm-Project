@@ -13,7 +13,7 @@
 	
 	<select id="selectMember" resultType="member"
 		parameterType="int">
-		SELECT mname, mtel, memail
+		SELECT *
 		FROM member
 		WHERE mno = #{mno}
 	</select>

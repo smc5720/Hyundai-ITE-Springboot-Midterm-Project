@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common/layout::setContent(~{this::content})}">
+<th:block th:fragment="content">
+<style>
+a {
+	color: black;
+	text-decoration: none;
+}
+
+a:link {
+	color: black;
+	text-decoration: none;
+}
+
+a:visited {
+	color: black;
+	text-decoration: none;
+}
+
+a:hover {
+	color: black;
+	text-decoration: none;
+}
+</style>
+
+<h3 class="text-center m-4 border-top border-bottom p-4">
+	<span>주문/배송</span>
+</h3>
+<section class="container">
+	<div class="row">
+		<nav class="col-md-2 p-3 h-100 d-flex flex-column">
+			<div class="bg-dark">
+				<p class="text-white text-center mt-3">마이페이지</p>
+			</div>
+			<div class="p-3 border">
+				<dl>
+					<dt>주문조회</dt>
+					<dd>
+						<a class="text-secondary ml-2" th:href="@{/member/myorders}">주문/배송</a>
+					</dd>
+				</dl>
+				<dl>
+					<dt>나의 상품관리</dt>
+					<dd>
+						<a class="text-secondary ml-2" th:href="@{/member/shoppingbag}">쇼핑백</a>
+					</dd>
+				</dl>
+				<dl>
+					<dt>쿠폰</dt>
+					<dd>
+						<a class="text-secondary ml-2" th:href="@{/member/mycoupons}">내 쿠폰</a>
+					</dd>
+				</dl>
+			</div>
+		</nav>
+		
+		
+		<article class="col-10 p-3">
+			<form method="get" th:action="@{/member/myorders}">
+				<div class="container-fluid bg-light border p-4">
+					<div class="d-flex align-items-center">
+						<div class="ml-2 mr-auto">검색구분</div>
+						<div class="mr-2">
+							<select class="custom-select" name="type" id="type">
+								<option value="pname">상품이름</option>
+								<option value="pcode">상품코드</option>
+							</select>
+						</div>
+						<div class="mr-2">
+							<input type="text" class="form-control" name="keyword"
+								id="keyword" size="65" th:value="${keyword}" />
+						</div>
+						<div class="mr-2 ml-auto">
+							<button class="btn btn-sm btn-secondary">조회하기</button>
+						</div>
+					</div>
+				</div>
+			</form>
+			
+			<div>
+				<h6 class="mt-5 mb-3 font-weight-bold">상품 주문 목록</h6>
+			</div>
+			<table class="table" id="ono">
+				<thead>
+					<tr class="row bg-light">
+						<td class="col-1 text-center"><small>주문번호</small></td>
+						<td class="col text-center"><small>상품정보</small></td>
+						<td class="col-1 text-center"><small>수량</small></td>
+						<td class="col-2 text-center"><small>판매가</small></td>
+						<td class="col-1 text-center"><small>주문상태</small></td>
+					</tr>
+				</thead>
+				<tbody>
+					<th:block th:each="orders : ${productOrders}">
+						<tr class="row">
+							<td class="col-1 text-center">[[${orders.ono}]]</td>
+							<td class="col border-left">
+								<div class="card border-white" style="max-width: 410px;">
+									<div class="row no-gutters">
+										<div class="col-md-4">
+											<img class="img-thumbnail" th:src="${orders.cimageproduct1}" alt="...">
+										</div>
+										<div class="col-md-8">
+											<div class="card-body p-1 ml-2">
+												<p class="card-text"><small>[[${orders.pcode}]]</small></p>
+												<p class="card-text">[[${orders.bname}]]</p>
+												<a th:href="@{/product/productdetail(pcode=${orders.pcode}, cproductcolor=${orders.pcolor})}">
+												<p class="card-title font-weight-bolder">[[${orders.pname}]]</p>
+												</a>
+												<p class="card-text">
+													<small class="text-muted">color : [[${orders.pcolor}]]
+														/ size : [[${orders.psize}]]</small>
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</td>
+							<td class="col-1 text-center align-middle border-left">[[${orders.oamount}]]</td>
+					
+							<td class="col-2 text-center align-middle border-left">￦
+							<span>[[${#numbers.formatInteger(orders.oamount * orders.pprice, 3, 'COMMA')}]]</span>
+							</td>
+							<td class="col-1 text-center align-middle border-left">
+							<small>
+								<th:block th:if="${orders.ostate}=='0'"><p>주문완료</p></th:block>
+								<th:block th:if="${orders.ostate}=='1'"><p>배송중</p></th:block>
+								<th:block th:if="${orders.ostate}=='2'"><p>배송완료</p></th:block>
+							</small>
+							</td>
+						</tr>
+					</th:block>
+					<tr class="row">
+						<td class="col text-center">
+                     	<div>
+                        <a href="myorders?pageNo=1">처음</a>
+                        <a th:if="${pager.groupNo>1}" th:href="@{myorders(type=${type}, keyword=${keyword}, pageNo=${pager.startPageNo-1})}">이전</a>
+                        <th:block th:each="i:${#numbers.sequence(pager.startPageNo, pager.endPageNo)}">
+                           <a th:class="(${pager.pageNo != i})? 'btn btn-light btn-sm' : 'btn btn-outline-dark btn-sm'" 
+                              th:href="@{myorders(type=${type}, keyword=${keyword}, pageNo=${i})}">[[${i}]]</a>                        
+                        </th:block>
+                        <a th:if="${pager.groupNo < pager.totalGroupNo}" th:href="@{myorders(type=${type}, keyword=${keyword}, pageNo=${pager.endPageNo+1})}">다음</a>                        
+                        <a th:href="@{myorders(type=${type}, keyword=${keyword}, pageNo=${pager.totalPageNo})}">끝</a>
+                    	</div>
+						
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</article>
+		
+	</div>
+</section>
+
+</th:block>
+</th:block>
+</html>

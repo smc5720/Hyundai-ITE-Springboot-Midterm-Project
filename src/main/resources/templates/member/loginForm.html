@@ -3,22 +3,22 @@
 <th:block th:replace="~{/common/layout::setContent(~{this::content})}">
 	<th:block th:fragment="content">
 		<style>
-			@media (min-width : 560px) {
-				.container {
-					max-width: 560px;
-				}
-			}
-		</style>
-
+@media ( min-width : 560px) {
+	.container {
+		max-width: 560px;
+	}
+}
+</style>
 		<div class="container">
 			<div id="login" class="mb-4">
 				<p style="text-align: center; margin-bottom: 1em; font-size: 17px;">로그인</p>
-				<div class="card-header" style="border: 1px solid lightgray; background-color: white;">
+				<div class="card-header"
+					style="border: 1px solid lightgray; background-color: white;">
 					회원
 					<hr />
 					<div>
 						<th:block th:if="${SPRING_SECURITY_LAST_EXCEPTION != null}">
-				<!-- 			<div class="alert  mb-2" style="color: #c69c6c;" role="alert">
+							<!-- 			<div class="alert  mb-2" style="color: #c69c6c;" role="alert">
 								<th:block th:if="${SPRING_SECURITY_LAST_EXCEPTION.message == 'Bad credentials'}">
 									아이디 또는 비밀번호가 올바르지 않습니다.
 								</th:block>
@@ -34,8 +34,8 @@
 									placeholder="아이디 / 이메일을 입력하세요." value="">
 							</p>
 							<p>
-								<input style="width: 100%;" id="mpassword" name="mpassword" type="password"
-									placeholder="비밀번호를 입력하세요.">
+								<input style="width: 100%;" id="mpassword" name="mpassword"
+									type="password" placeholder="비밀번호를 입력하세요.">
 							</p>
 							<button class="btn btn-dark btn-block mb-2">로그인</button>
 							<p style="font-size: 0.7em;">

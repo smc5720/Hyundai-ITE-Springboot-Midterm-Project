@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mycompany.webapp.dto.CouponMember;
 import com.mycompany.webapp.dto.Event;
+import com.mycompany.webapp.security.CustomUserDetails;
 import com.mycompany.webapp.service.EventService;
 
 @Controller
@@ -28,8 +30,8 @@ public class EventController {
 	private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
 	@Resource
-	EventService eventService;	
-	
+	EventService eventService;
+
 	public static JSONObject brandListJson = new JSONObject();
 	public static JSONObject eventListJson = new JSONObject();
 
@@ -47,7 +49,7 @@ public class EventController {
 			eventListJson.put("result", "success");
 			eventListJson.put("events", events);
 		}
-		
+
 		String json = eventListJson.toString();
 
 		return json;
@@ -64,13 +66,16 @@ public class EventController {
 	}
 
 	private ExecutorService executorService = Executors.newFixedThreadPool(1);
-	
+
 	@RequestMapping(value = "/joinEvent", produces = "application/json; charset=UTF-8")
 	@ResponseBody
-	public String joinEvent(int eno, HttpSession session) throws Exception {
+	public String joinEvent(int eno, HttpSession session, Authentication authentication) throws Exception {
 		Callable<Integer> task = new Callable<Integer>() {
 			@Override
 			public Integer call() throws Exception {
+
+				CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+				int mno = customUserDetails.getMno();
 
 				Event event = eventService.getEventByEno(eno);
 				int remainCoupons = event.getEcouponremain();
@@ -79,7 +84,7 @@ public class EventController {
 				// 남아있는 쿠폰이 0보다 클 경우
 				if (remainCoupons > 0) {
 					CouponMember cm = new CouponMember();
-					cm.setMno(Integer.parseInt(session.getAttribute("mno").toString()));
+					cm.setMno(mno);
 					cm.setCno(totalCoupons - remainCoupons + 1);
 					cm.setEno(eno);
 					// 쿠폰 발행(쿠폰 멤버 값 추가 + 쿠폰 잔여 수량 1 감소)
@@ -108,10 +113,9 @@ public class EventController {
 
 		return jsonObject.toString();
 	}
-	
+
 	@RequestMapping("/resetEvent")
 	public String resetEvent(int eno) {
-
 		eventService.resetEvent(eno);
 		return "redirect:/";
 	}
